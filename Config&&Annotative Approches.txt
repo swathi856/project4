@@ -1,0 +1,247 @@
+APP.java:
+----------------
+package Ch16.Application2;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+//      ApplicationContext context=new ClassPathXmlApplicationContext("confige.xml");
+//      Departments dept=context.getBean("Departments",Departments.class);
+//      System.out.println(dept);
+      
+     AbstractApplicationContext context=new AnnotationConfigApplicationContext(Mysecond.class);
+      System.out.println( context.getBean(Employee.class));
+      //System.out.println(context.getBean(Departments1.class));
+      context.registerShutdownHook();
+
+Config.xml:
+----------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+xmlns:context="http://www.springframework.org/schema/context"  
+xmlns:p="http://www.springframework.org/schema/p"  
+xmlns:tx="http://www.springframework.org/schema/tx"  
+xsi:schemaLocation="http://www.springframework.org/schema/beans  
+http://www.springframework.org/schema/beans/spring-beans.xsd  
+http://www.springframework.org/schema/context  
+http://www.springframework.org/schema/context/spring-context.xsd  
+http://www.springframework.org/schema/tx  
+http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+<bean id="Employee1" class="Ch16.Application2.Employee">
+<constructor-arg name="empname"  value="janardhan"> </constructor-arg>
+<constructor-arg name="empdept" value="java" ></constructor-arg>
+<constructor-arg name="empid"  value="128"></constructor-arg>
+<constructor-arg>
+<list >
+<value>76</value>
+<value>56</value>
+<value>86</value>
+<value>36</value>
+</list>
+</constructor-arg>
+<constructor-arg name="names">
+<map>
+<entry key="1" value="csr"> </entry>
+<entry key="2" value="ufdy"> </entry>
+<entry key="3" value="ufud"> </entry>
+<entry key="4" value="dfghs"> </entry>
+</map>
+</constructor-arg>
+
+</bean>
+<bean id="Employee2" class="Ch16.Application2.Employee">
+<constructor-arg name="empname"  value="chkradhar"> </constructor-arg>
+<constructor-arg name="empdept" value="Maths" ></constructor-arg>
+<constructor-arg name="empid"  value="118"></constructor-arg>
+
+</bean>
+
+<bean id="Departments" class="Ch16.Application2.Departments">
+<property name="deptname" value="java"/>
+<property name="deptid" value="128"/>
+<property name="employee" ref="Employee1"/>
+</bean>
+
+
+</beans>
+         
+    }
+}
+
+Employee.java
+-------------------------------------------------------------------------
+package Ch16.Application2;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.stereotype.Component;
+@Component
+public class Employee 
+{
+  String empname;
+  String empdept;
+  int empid;
+  Departments1 departments;
+//  List<String> marks;
+//  Map<Integer,String>  names;
+//  
+//@Override
+//public String toString() {
+//	return "Employee [empname=" + empname + ", empdept=" + empdept + ", empid=" + empid + ", departments=" + departments
+//			+ ", marks=" + marks + ", salary=" + names + "]";
+//}
+//
+//public Employee(String empname, String empdept, int empid, Departments1 departments, List<String> marks,
+//		Map<Integer, String> names) {
+//	super();
+//	this.empname = empname;
+//	this.empdept = empdept;
+//	this.empid = empid;
+//	this.departments = departments;
+//	this.marks = marks;
+//	this.names = names;
+//}
+
+
+  
+ 
+
+
+public Employee(String empname, String empdept, int empid, Departments1 departments) {
+	super();
+	this.empname = empname;
+	this.empdept = empdept;
+	this.empid = empid;
+	this.departments = departments;
+}
+
+
+
+@Override
+public String toString() {
+	return "Employee [empname=" + empname + ", empdept=" + empdept + ", empid=" + empid + ", departments=" + departments
+			+ "]";
+}
+}
+
+Department.java
+-------------------------------------------------------------------------
+package Ch16.Application2;
+
+public class Departments 
+{
+	String deptname;
+	int deptid;
+	Employee employee;
+	
+	public String getDeptname() {
+		return deptname;
+	}
+	public void setDeptname(String deptname) {
+		this.deptname = deptname;
+	}
+	public int getDeptid() {
+		return deptid;
+	}
+	public void setDeptid(int deptid) {
+		this.deptid = deptid;
+	}
+	public Employee getEmployee() {
+		return employee;
+	}
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+	
+	@Override
+	public String toString() {
+		return "Departments [deptname=" + deptname + ", deptid=" + deptid + ", employee=" + employee + "]";
+	}
+	
+
+}
+
+Mysecond.java
+-------------------------------------------------------------------------
+package Ch16.Application2;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+
+public class Mysecond 
+{
+	@Bean
+	public Employee emp1()
+	{
+		
+		return new Employee("mk","javafullstack",01,dept());
+	}
+    @Bean
+    public Departments1 dept()
+    {
+    	Departments1 dept1=new Departments1();
+    
+    	dept1.setDeptname("java");
+    	dept1.setDeptid(11);
+//    	dept1.m1();
+//    	dept1.m2();
+    	return dept1;
+    }
+}
+
+Departments1.java
+------------------------------------------------------------
+package Ch16.Application2;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Departments1 
+{
+	String deptname;
+	int deptid;
+	
+	public void setDeptname(String deptname) {
+		this.deptname = deptname;
+	}
+	
+	public void setDeptid(int deptid) {
+		this.deptid = deptid;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "Departments1 [deptname=" + deptname + ", deptid=" + deptid + "]";
+	}
+
+	@PostConstruct
+	public void m1()
+	{
+		System.out.println("hello i am in postConstruct method");
+	}
+	@PreDestroy
+	public void m2()
+	{
+		System.out.println("hi i am in preDestroy method");
+	}
+		
+}
